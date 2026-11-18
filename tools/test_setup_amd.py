@@ -88,22 +88,23 @@ class Rx6000Detection(KfdDetection):
         fake_sysfs(self.root, [
             (100300, 80, 128, "AMD Radeon RX 6900 XT", 16 << 30),     # gfx1030
             (100301, 40, 129, None, 12 << 30),                        # gfx1031 (RX 6700 XT), no product name
-            (100302, 28, 130, None, 8 << 30),                         # gfx1032 (RX 6600): not in the package
+            (100302, 28, 130, None, 8 << 30),                         # gfx1032 (RX 6600): now in the RDNA2_ARCHS
         ])
         g = setup.amd_gpus(str(self.root))
         self.assertEqual([x["arch"] for x in g], ["gfx1030", "gfx1031", "gfx1032"])
         self.assertEqual(g[1]["name"], setup.AMD_NAMES["gfx1031"])
-        self.assertEqual([setup.is_rdna2(x) for x in g], [True, True, False])
+        self.assertEqual([setup.is_rdna2(x) for x in g], [True, True, True])
         self.assertIsNone(setup.amd_problem(g[0]))
         self.assertIsNone(setup.amd_problem(g[1]))
+        self.assertIsNone(setup.amd_problem(g[2]))
 
     def test_the_note_is_for_gfx103x_only(self):
-        for arch in ("gfx1030", "gfx1031", "gfx1030:sramecc-:xnack-"):
+        for arch in ("gfx1030", "gfx1031", "gfx1032", "gfx1030:sramecc-:xnack-"):
             lines = setup.rdna2_notes({"arch": arch})
             self.assertEqual(len(lines), 1, arch)
             self.assertIn("built, not tested on a real RX 6000 card", lines[0])
             self.assertIn(arch.split(":")[0], lines[0])
-        for arch in ("gfx1100", "gfx1101", "gfx1102", "gfx1200", "gfx1201", "gfx1151", "gfx1032", "gfx103", "gfx10300", "", None):
+        for arch in ("gfx1100", "gfx1101", "gfx1102", "gfx1200", "gfx1201", "gfx1151", "gfx103", "gfx10300", "", None):
             self.assertEqual(setup.rdna2_notes({"arch": arch}), [], arch)
         self.assertEqual(setup.rdna2_notes(None), [])
         self.assertFalse(setup.is_rdna2({"arch": "gfx1030x"}))

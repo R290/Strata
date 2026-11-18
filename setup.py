@@ -3976,6 +3976,7 @@ ROCM_INDEXES = {"gfx1100": "https://rocm.nightlies.amd.com/v2/gfx110X-dgpu/",   
                 "gfx1201": "https://rocm.nightlies.amd.com/v2/gfx120X-all/",
                 "gfx1030": "https://rocm.nightlies.amd.com/v2/gfx103X-all/",
                 "gfx1031": "https://rocm.nightlies.amd.com/v2/gfx103X-all/",
+                "gfx1032": "https://rocm.nightlies.amd.com/v2/gfx103X-all/",   # RX 6600 / 6650 (RDNA2): the same gfx103X wheels
                 "gfx1151": "https://rocm.nightlies.amd.com/v2/gfx1151/",       # Strix Halo (docs/STRIX_HALO.md)
                 "gfx1150": "https://rocm.nightlies.amd.com/v2/gfx1150/",       # Strix Point: only with STRATA_EXPERIMENTAL_GFX1150=1
                 "gfx1103": "https://rocm.nightlies.amd.com/v2/gfx110X-all/"}   # Radeon 780M: only with STRATA_EXPERIMENTAL_GFX1103=1
@@ -4001,7 +4002,7 @@ GFX1103_OPT_IN = os.environ.get("STRATA_EXPERIMENTAL_GFX1103") == "1"
 # build one with `STRATA_HIP_ARCHS=gfx1150 tools\hip\build_windows.bat` and start setup with `--prebuilt dist\`.
 # Unset: unchanged.
 GFX1150_OPT_IN = os.environ.get("STRATA_EXPERIMENTAL_GFX1150") == "1"
-AMD_ARCHS = ("gfx1100", "gfx1101", "gfx1102", "gfx1200", "gfx1201", "gfx1030", "gfx1031", "gfx1151") \
+AMD_ARCHS = ("gfx1100", "gfx1101", "gfx1102", "gfx1200", "gfx1201", "gfx1030", "gfx1031", "gfx1032", "gfx1151") \
             + (("gfx1103",) if GFX1103_OPT_IN else ()) + (("gfx1150",) if GFX1150_OPT_IN else ())
 # The exact (bit-identical) speed switches the engine turns on by default on gfx1151 (src/core/arch_defaults.cpp), less
 # STRATA_HCD_EXACT: that one copies the gfx1151 hipBLASLt table's solutions 1176 / 1177, and the gfx1103 table
@@ -4031,6 +4032,7 @@ AMD_NAMES = {"gfx1100": "AMD Radeon RX 7900 series (gfx1100)",   # when sysfs ha
              "gfx1201": "AMD Radeon RX 9070 series / AI PRO R9700 (gfx1201)",
              "gfx1030": "AMD Radeon RX 6800 / 6900 series (gfx1030)",
              "gfx1031": "AMD Radeon RX 6700 XT series (gfx1031)",
+             "gfx1032": "AMD Radeon RX 6600 / 6650 series (gfx1032)",
              "gfx1151": "AMD Radeon 8060S / 8050S / 8040S (Ryzen AI Max, Strix Halo, gfx1151)",
              # integrated Radeons of other Ryzen families: named so they are not taken for Strix Halo (not supported)
              "gfx1150": "AMD Radeon 890M / 880M (Ryzen AI 300, Strix Point, gfx1150)",
@@ -4129,7 +4131,7 @@ def is_strix_halo(g) -> bool:
     return isinstance(g, dict) and gfx_arch_is(g.get("arch"), STRIX_HALO_ARCH)
 
 
-RDNA2_ARCHS = ("gfx1030", "gfx1031")        # RX 6800 / 6900 / 6950 series and RX 6700 XT: the cards of the ready-made RX 6000 engine package
+RDNA2_ARCHS = ("gfx1030", "gfx1031", "gfx1032")   # RX 6800 / 6900 / 6950, RX 6700 XT and RX 6600 / 6650: the cards of the ready-made RX 6000 engine package
 
 
 def is_rdna2(g) -> bool:
